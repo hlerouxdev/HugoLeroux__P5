@@ -5,6 +5,8 @@ var singleProductPrice = document.querySelector('#price'); //selection de l'id '
 var singleProductDesc = document.querySelector('#description'); //selection de l'id '#description'
 var singleProductColors = document.querySelector('#colors'); //selection de l'id '#colors'
 
+var addToCartButton = document.querySelector('#addToCart'); //selection de l'id '#addtocart'
+
 function findProduct() { //fonction permettant la recherche du produit dans l'api
     const queryString = window.location.search; //creation d'une constante avec l'url
     const urlParams = new URLSearchParams(queryString); //crétion de la recherche de paramètres de l'url
@@ -41,12 +43,24 @@ function findProductColors(x) { //fonction permettant de récupérer les couleur
 
 async function displaySingleProduct() { //fonction d'affichage de chaque éléments
     const singleProduct = await findProduct(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
-    console.log(singleProduct);
 
     createProductContent(singleProduct); //appel de la fonction de création des éléments
     findProductColors(singleProduct); //appel de la fonction d'affichage des couleurs
 }
 
 //appel de la fonction d'affichage
-displaySingleProduct()
+displaySingleProduct();
     
+function addProductQuantity(){ //fonction d'ajout d'un produit dans le local storage
+    let productQuantity = localStorage.getItem('cartNumbers')
+    productQuantity = parseInt(productQuantity)
+    
+    if (productQuantity) {
+        localStorage.setItem('cartNumbers', productQuantity + 1)
+    }
+    else {
+        localStorage.setItem('cartNumbers', 1)
+    }
+}
+
+addToCartButton.addEventListener("click", addProductQuantity);
