@@ -8,7 +8,7 @@ function setArray() {
 // sélection de la class ".item" pour y mettre les élements
 var shopContainer = document.querySelector(".items")
 
-async function main() { 
+async function displayProducts() { 
     const products = await setArray() //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
     console.log(products)
 
@@ -45,6 +45,6 @@ async function main() {
 }
 
 // appel de la fonction main
-main()
+displayProducts()
 
 
