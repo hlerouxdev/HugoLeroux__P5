@@ -44,6 +44,7 @@ function createProducts(x) { //fonction de création des liens pour qhaque produ
 async function displayProducts() { 
     const products = await setArray(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
     createProducts(products); //appel de la fonction de création des éléments
+    console.log(products)
 }
 
 // appel de la fonction d'affichage
