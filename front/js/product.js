@@ -52,33 +52,34 @@ async function displaySingleProduct() { //fonction d'affichage de chaque éléme
 
 //appel de la fonction d'affichage
 displaySingleProduct();
-    
-function addProductQuantity(){ //fonction d'ajout d'un produit dans le local storage
-    let productsQuantity = localStorage.getItem('productsInCart')
-    productsQuantity = parseInt(productsQuantity)
-    
-    if (productsQuantity) {
-        localStorage.setItem('productsInCart', productsQuantity + 1)
-    }
-    else {
-        localStorage.setItem('productsInCart', 1)
-    }
-}
 
-function addSingleProduct() { //fonction d'ajout d'un produit distinct dans le panier
+// ----------------------------------------------------------------------Fonctions du Panier----------------------------------------------------------------------
+
+function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l'objet dans un array en regardant son "id"
+    for (let elem of array) {
+      if (elem.name === valueToDetect) {
+        return true
+      }
+    }
+    return false
+  }
+
+  function addToCart() {
     var colorSelected = singleProductColors.options[singleProductColors.selectedIndex].text; //prend la valeur sélectionnée dans les options de couleur
-    let numberSelected = singleProductQuantity.value; //prend la quantité sélectionnée dans les options de quantité
-    
-    console.log(colorSelected)
-    console.log(numberSelected)
+    let numberSelected = parseInt(singleProductQuantity.value); //prend la quantité sélectionnée dans les options de quantité
+    let cart = localStorage.getItem('cart')
+    console.log(document.getElementById('title').textContent)
 
-    let product = { id: productId, color: colorSelected, quantity: numberSelected }; //créé un objet avec le produit sélectionné
-    console.log(product);
-    let cart = []
-    cart.push(product)
+    if(cart) { //vérifie l'existence du panier
+        if(isInCart(cart, singleProductName)) {
+            console.log('ce produit existe dans le panier')
+        } else{
+            console.log("ce produit n'existe pas dans ce panier")
+        }
+    } else{ // créé le panier avec l'objet selectionné, sa couleur et sa quantité
+        localStorage.setItem('cart', `[{name: ${document.getElementById('title').textContent}, colors: {${colorSelected}: ${numberSelected}}}]`)
+    }
+  }
 
-    console.log(cart)
-}
-
-addToCartButton.addEventListener("click", addSingleProduct);
+addToCartButton.addEventListener("click", addToCart);
 
