@@ -47,7 +47,6 @@ async function displaySingleProduct() { //fonction d'affichage de chaque éléme
 
     createProductContent(singleProduct); //appel de la fonction de création des éléments
     findProductColors(singleProduct); //appel de la fonction d'affichage des couleurs
-
 }
 
 //appel de la fonction d'affichage
@@ -55,31 +54,50 @@ displaySingleProduct();
 
 // ----------------------------------------------------------------------Fonctions du Panier----------------------------------------------------------------------
 
-function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l'objet dans un array en regardant son "id"
+function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l'objet dans un array en regardant son nom
     for (let elem of array) {
       if (elem.name === valueToDetect) {
         return true
-      }
+        }
     }
     return false
-  }
+}
 
-  function addToCart() {
+function addProduct(array, element){ //modifie le panier
+    array.push(element); //ajout du produit à cart
+    localStorage.setItem('cart', JSON.stringify(array)); //création de cart dans le local storage
+}
+
+// fonction d'ajout du produit au panier
+function addToCart() {
     var colorSelected = singleProductColors.options[singleProductColors.selectedIndex].text; //prend la valeur sélectionnée dans les options de couleur
     let numberSelected = parseInt(singleProductQuantity.value); //prend la quantité sélectionnée dans les options de quantité
-    let cart = localStorage.getItem('cart')
-    console.log(document.getElementById('title').textContent)
+    var productName = document.getElementById('title').textContent + ' ' + colorSelected; //création du nom du produit avec le nom et la couleur du canapé
+    let cart = localStorage.getItem('cart'); //récupère le panier dans le local storage
 
-    if(cart) { //vérifie l'existence du panier
-        if(isInCart(cart, singleProductName)) {
-            console.log('ce produit existe dans le panier')
-        } else{
-            console.log("ce produit n'existe pas dans ce panier")
+    //vérifie qu'une couleur a été selectionnée
+    if(colorSelected === '--SVP, choisissez une couleur --') {//empêche l'ajout du produit si une couleur n'est pas selectionnée
+        console.log('il faut choisir une couleur')
+    } else {
+        let product = {name: productName, id: productId, quantity: numberSelected}; //création d'un produit avec le nom et la couleur du canapé
+        //vérifie l'existence du panier
+        if(cart) { 
+            cart = JSON.parse(cart);
+            //vérifie si le produit est dans le panier
+            if(isInCart(cart, productName)) { 
+                console.log("ce produit existe dans le panier");
+            //le produit n'existe pas dans le panier
+            } else{
+                console.log("ce produit n'existe pas dans ce panier");
+                addProduct(cart, product);//appel de la fonction d'ajout du produit au panier
+            }
+        //créé le panier avec l'objet selectionné, sa couleur et sa quantité
+        } else{ 
+            let cart = []; //création du panier
+            addProduct(cart, product);// appel de la fonction d'ajout du produit au panier
         }
-    } else{ // créé le panier avec l'objet selectionné, sa couleur et sa quantité
-        localStorage.setItem('cart', `[{name: ${document.getElementById('title').textContent}, colors: {${colorSelected}: ${numberSelected}}}]`)
     }
-  }
+}
 
+//ajout de l'appel de la fonction addToCart au clique sur le bouton Ajouter au panier
 addToCartButton.addEventListener("click", addToCart);
-
