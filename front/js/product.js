@@ -86,6 +86,11 @@ function addToCart() {
             //vérifie si le produit est dans le panier
             if(isInCart(cart, productName)) { 
                 console.log("ce produit existe dans le panier");
+                var index = cart.findIndex(function(i) { //cherche l'index du produit dans le panier
+                    return i.name == productName
+                });
+                cart[index].quantity = numberSelected; //modifie la quantité du produit
+                localStorage.setItem('cart', JSON.stringify(cart)); //met à jour le panier dans le local storage
             //le produit n'existe pas dans le panier
             } else{
                 console.log("ce produit n'existe pas dans ce panier");
