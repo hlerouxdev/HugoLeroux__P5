@@ -8,11 +8,8 @@ function setArray() {
 // sélection de la class ".item" pour y mettre les élements
 var shopContainer = document.querySelector(".items")
 
-async function displayProducts() { 
-    const products = await setArray() //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
-    console.log(products)
-
-    for (let elem of products) { //fonction de création des liens pour qhaque produit
+function createProducts(x) { //fonction de création des liens pour qhaque produit
+    for (let elem of x) { // boucle dnas l'array
         //Création du lien
         var productContainer = document.createElement('a');
         productContainer.setAttribute('href', `./product.html?id=${elem._id}`);
@@ -42,6 +39,13 @@ async function displayProducts() {
         //ajout du ien dans la classe ".items"
         shopContainer.appendChild(productContainer)
     }
+}
+
+async function displayProducts() { 
+    const products = await setArray() //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
+    console.log(products)
+
+    createProducts(products)
 }
 
 // appel de la fonction main
