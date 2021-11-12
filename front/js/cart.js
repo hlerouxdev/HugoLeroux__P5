@@ -1,39 +1,59 @@
 let cart = JSON.parse(localStorage.getItem('cart'));
 var totalProductNumbers = document.getElementById('totalQuantity');
 totalProductNumbers.textContent = cart.length;
-
 var productSection = document.getElementById('cart__items');
-
-function createFinalProducts(array){
-    const filterByReference = (array, cart) => {
-        let finalCart = [];
-        finalCart = array.filter(el => {
-           return !cart.find(elem => {
-              return elem._id === el._id;
-           });
-        });
-        return finalCart;
-    }
-    localStorage.setItem('finalProducts', JSON.stringify(filterByReference(array, cart)))
-}
 
 function displayFinalProducts(array) {
     console.log(array);
     console.log(cart);
     for(elem of cart) {
-        var productContainer = document.createElement('article');
-        productContainer.setAttribute('class', 'cart__item');
-        productContainer.setAttribute('data-id', elem._id);
+        if(elem.quantity != 0){
+            var productContainer = document.createElement('article');
+            productContainer.setAttribute('class', 'cart__item');
+            productContainer.setAttribute('data-id', elem._id);
 
-        var productInfo = document.createElement('div')
-        productInfo.setAttribute('class', 'cart_item_content')
-        var productName = document.createElement('h2')
-        productName.textContent = elem.name
+            var productImageDiv = document.createElement('div');
+            productImageDiv.setAttribute('class', 'cart__item__img');
 
-        productInfo.appendChild(productName)
+            var productContent = document.createElement('div');
+            productContent.setAttribute('class', 'cart_item_content');
 
-        productSection.appendChild(productInfo);
-        productSection.appendChild(productContainer);
+            var productTitlePrice = document.createElement('div');
+            productTitlePrice.setAttribute('class', 'cart_item_content_titlePrice');
+
+            var productTitle = document.createElement('h2');
+            productTitle.textContent = elem.name;
+            var productPrice = document.createElement('p');
+            productPrice.innerText = ` €`
+
+            var productSettings = document.createElement('div');
+            productSettings.setAttribute('class', 'cart__item__content__settings');
+
+            var productSettingsQuantity = document.createElement('div');
+            productSettingsQuantity.setAttribute('class', 'cart__item__content__settings__quantity');
+            productSettingsQuantity.innerHTML += `<p>Qté : </p>
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${elem.quantity}">`
+
+            var productSettingDelete = document.createElement('div')
+            productSettingDelete.setAttribute('class', 'cart__item__content__settings__delete')
+            var productDelete = document.createElement('p')
+            productDelete.setAttribute('class', 'deleteItem')
+            productDelete.innerText = 'Supprimer'
+            
+
+            productTitlePrice.appendChild(productTitle);
+            productTitlePrice.appendChild(productPrice);
+
+            productSettingDelete.appendChild(productDelete)
+            productSettings.appendChild(productSettingsQuantity);
+            productSettings.appendChild(productSettingDelete)
+
+            productContent.appendChild(productTitlePrice);
+            productContent.appendChild(productSettings)
+            productContainer.appendChild(productImageDiv);
+            productContainer.appendChild(productContent);
+            productSection.appendChild(productContainer);
+        }
     }
 }
 
@@ -46,9 +66,7 @@ function setArray() {
 
 async function displayProducts() { 
     const products = await setArray(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
-    createFinalProducts(products);
-    let finalProducts = JSON.parse(localStorage.getItem('finalProducts'));
-    displayFinalProducts(finalProducts)
+    displayFinalProducts(products)
 }
 
 displayProducts()

@@ -84,7 +84,7 @@ function addToCart() {
     if(colorSelected === '--SVP, choisissez une couleur --') {//empêche l'ajout du produit si une couleur n'est pas selectionnée
         console.log('il faut choisir une couleur')
     } else {
-        let product = {name: productName, _id: productId, quantity: numberSelected}; //création d'un produit avec le nom et la couleur du canapé
+        let product = {name: productName, _id: productId, color: colorSelected, quantity: numberSelected}; //création d'un produit avec le nom et la couleur du canapé
         //vérifie l'existence du panier
         if(cart) { 
             cart = JSON.parse(cart);
