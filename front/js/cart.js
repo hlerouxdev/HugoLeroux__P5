@@ -1,13 +1,23 @@
 let cart = JSON.parse(localStorage.getItem('cart'));
-var totalProductNumbers = document.getElementById('totalQuantity');
-totalProductNumbers.textContent = cart.length;
 var productSection = document.getElementById('cart__items');
 
+//fonction permettant d'afficher le nombres total de produits
+function displayTotalProductNumbers() { 
+    var totalProductNumbers = document.getElementById('totalQuantity'); // sélection de l'element '#totalQuantity'
+    var totalQuantity = 0; //création du chiffre qui sera affiché dans '#totalQuantity'
+    for(elem of cart) { //boucle dans cart
+        if(elem.quantity != 0) { //n'éxecuter que si la quantité du produit n'est pas 0
+            var tempProductQuantity = elem.quantity; //création d'une quantité temporaire pour chaque produit
+            totalQuantity += tempProductQuantity; //ajout de cette quantité temporaire à la quantité total
+        }
+    }
+    totalProductNumbers.textContent = totalQuantity; //changement du texte de '#totalQuantity'
+}
+
 function displayFinalProducts(array) {
-    console.log(array);
-    console.log(cart);
     for(elem of cart) {
         if(elem.quantity != 0){
+
             var productContainer = document.createElement('article');
             productContainer.setAttribute('class', 'cart__item');
             productContainer.setAttribute('data-id', elem._id);
@@ -23,8 +33,6 @@ function displayFinalProducts(array) {
 
             var productTitle = document.createElement('h2');
             productTitle.textContent = elem.name;
-            var productPrice = document.createElement('p');
-            productPrice.innerText = ` €`
 
             var productSettings = document.createElement('div');
             productSettings.setAttribute('class', 'cart__item__content__settings');
@@ -32,29 +40,59 @@ function displayFinalProducts(array) {
             var productSettingsQuantity = document.createElement('div');
             productSettingsQuantity.setAttribute('class', 'cart__item__content__settings__quantity');
             productSettingsQuantity.innerHTML += `<p>Qté : </p>
-                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${elem.quantity}">`
+                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${elem.quantity}">`;
 
-            var productSettingDelete = document.createElement('div')
-            productSettingDelete.setAttribute('class', 'cart__item__content__settings__delete')
-            var productDelete = document.createElement('p')
-            productDelete.setAttribute('class', 'deleteItem')
-            productDelete.innerText = 'Supprimer'
-            
+            var productSettingDelete = document.createElement('div');
+            productSettingDelete.setAttribute('class', 'cart__item__content__settings__delete');
+            var productDelete = document.createElement('p');
+            productDelete.setAttribute('class', 'deleteItem');
+            productDelete.innerText = 'Supprimer';
+        
+            var tempProductId = elem._id;
+            for(elem of array) {
+                if(elem._id === tempProductId) {
 
-            productTitlePrice.appendChild(productTitle);
-            productTitlePrice.appendChild(productPrice);
+                    var productImage = document.createElement('img');
+                    productImage.src = (elem.imageUrl);
+                    productImage.alt = (elem.altTxt);
 
-            productSettingDelete.appendChild(productDelete)
-            productSettings.appendChild(productSettingsQuantity);
-            productSettings.appendChild(productSettingDelete)
+                    var productPrice = document.createElement('p');
+                    productPrice.innerText = `${elem.price} €`;
 
-            productContent.appendChild(productTitlePrice);
-            productContent.appendChild(productSettings)
-            productContainer.appendChild(productImageDiv);
-            productContainer.appendChild(productContent);
-            productSection.appendChild(productContainer);
+                    productImageDiv.appendChild(productImage);
+
+                    productTitlePrice.appendChild(productTitle);
+                    productTitlePrice.appendChild(productPrice);
+
+                    productSettingDelete.appendChild(productDelete);
+                    productSettings.appendChild(productSettingsQuantity);
+                    productSettings.appendChild(productSettingDelete);
+
+                    productContent.appendChild(productTitlePrice);
+                    productContent.appendChild(productSettings)
+                    productContainer.appendChild(productImageDiv);
+                    productContainer.appendChild(productContent);
+                    productSection.appendChild(productContainer);
+                }
+            }
         }
     }
+}
+
+function getTotalPrice(array) {
+    var totalPrice = document.getElementById('totalPrice');
+    var totalPriceNumber = 0;
+    for(elem of cart) {
+        var tempProductQuantity = elem.quantity;
+        var tempProductId = elem._id;
+        for(elem of array) {
+            if(elem._id === tempProductId) {
+                productPrice = tempProductQuantity * elem.price;
+                totalPriceNumber += productPrice;
+            }
+        }
+    }
+    totalPrice.textContent = totalPriceNumber;
 }
 
 function setArray() {
@@ -66,7 +104,9 @@ function setArray() {
 
 async function displayProducts() { 
     const products = await setArray(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
-    displayFinalProducts(products)
+    displayFinalProducts(products);
+    displayTotalProductNumbers();
+    getTotalPrice(products);
 }
 
-displayProducts()
+displayProducts();

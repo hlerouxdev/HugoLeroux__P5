@@ -52,7 +52,7 @@ async function displaySingleProduct() { //fonction d'affichage de chaque éléme
 //appel de la fonction d'affichage
 displaySingleProduct();
 
-// ----------------------------------------------------------------------Fonctions du Panier----------------------------------------------------------------------
+// ----------------------------------------------------------------------FONCTIONS DU PANIER----------------------------------------------------------------------
 
 function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l'objet dans un array en regardant son nom
     for (let elem of array) {
@@ -92,7 +92,7 @@ function addToCart() {
             if(isInCart(cart, productName)) { 
                 console.log("ce produit existe dans le panier");
                 var index = cart.findIndex(function(i) { //cherche l'index du produit dans le panier
-                    return i.name == productName
+                    return i.name == productName; 
                 });
                 if(numberSelected === 0) { // Si le champ de quantité a été remis à 0, retire le produit du panier
                     console.log('la quantité selectionné est 0');
