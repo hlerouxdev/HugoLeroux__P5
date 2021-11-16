@@ -13,23 +13,18 @@ function createProducts(x) { //fonction de création des liens pour qhaque produ
         //Création du lien
         var productContainer = document.createElement('a');
         productContainer.setAttribute('href', `./product.html?id=${elem._id}`);
-
         //Création de l'article
         var product = document.createElement('article');
-
         //création de l'image
         var productImage = document.createElement('img');
         productImage.src = (elem.imageUrl);
         productImage.alt = (elem.altTxt);
-
         //création de titre
         var productTitle = document.createElement('h3');
         productTitle.textContent = (elem.name);
-
         //création de la description
         var productDesc = document.createElement('p');
         productDesc.textContent =(elem.description);
-
         //Ajout de chaque élément dans l'article
         product.appendChild(productImage);
         product.appendChild(productTitle);

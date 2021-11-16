@@ -14,80 +14,39 @@ function displayTotalProductNumbers() {
     totalProductNumbers.textContent = totalQuantity; //changement du texte de '#totalQuantity'
 }
 
-function createElem(type, elem, content, parent, className) { //fonction d'ajout d'élément
-    var elem = document.createElement(type)
+function createElem(type, content, parent, className) { //fonction d'ajout d'élément
+    var elemName = document.createElement(type) //créé la variable
     if (className) {
-        elem.setAttribute('class', className);
+        elemName.setAttribute('class', className); //ajoute le classe si il y en a une
     }
-    elem.innerText = content;
-    parent.appendChild(elem);
+    elemName.innerText = content; //ajoute le texte
+    parent.appendChild(elemName); //ajoute l'élément à son parent
+    return elemName
 }
 
 //fonction d'affichage des produits du panier
 function displayFinalProducts(array) {
     for(elem of array) {
-        var imageUrl = elem.imageUrl; //récupère l'url de l'image
-        var imageAlt = elem.altTxt; //récupère l'alt de l'imge
-        var productName = elem.name; //récupère le nom du produit
-        var productPriceNumber = elem.price; //récupère le prix du produit
-        var ProductId = elem._id; //récupère l'id du produit
-        for(elem of cart) {
-            if(elem._id === ProductId) { //vérifie si le produit de cart à le même _id
-                // var productContainer = document.createElement('article');
-                createElem('article', productContainer, null, productSection, 'cart__item')
-                productContainer.setAttribute('data-id', elem._id);
-                
-                var productImage = document.createElement('img');
-                productImage.src = (imageUrl);
-                productImage.alt = (imageAlt);
-
-                var productTitle = document.createElement('h2');
-                productTitle.textContent = productName;
-
-                var productPrice = document.createElement('p');
-                productPrice.innerText = `${productPriceNumber} €`;
-        
-                var productImageDiv = document.createElement('div');
-                productImageDiv.setAttribute('class', 'cart__item__img');
-        
-                var productContent = document.createElement('div');
-                productContent.setAttribute('class', 'cart_item_content');
-        
-                var productTitlePrice = document.createElement('div');
+        for(cartElem of cart) {
+            if(cartElem._id === elem._id) { //vérifie si le produit de cart à le même _id que dans products
+                var productContainer = createElem('article', null, productSection, 'cart__item');
+                productContainer.setAttribute('data-id', cartElem._id);
+                var productImageDiv = createElem('div', null, productContainer, 'cart__item__img');
+                var productImage = createElem('img', null, productImageDiv);
+                productImage.src = (elem.imageUrl);
+                productImage.alt = (elem.altTxt);
+                var productContent = createElem('div', null, productContainer, 'cart_item_content');
+                var productTitlePrice = createElem('div', null, productContent);
                 productTitlePrice.setAttribute('class', 'cart_item_content_titlePrice');
-        
-                var productColor = document.createElement('p')
-                productColor.textContent = elem.color
-        
-                var productSettings = document.createElement('div');
-                productSettings.setAttribute('class', 'cart__item__content__settings');
-        
-                var productSettingsQuantity = document.createElement('div');
-                productSettingsQuantity.setAttribute('class', 'cart__item__content__settings__quantity');
+                var productTitle = createElem('h2', elem.name, productTitlePrice);
+                var productPrice = createElem('p', `${elem.price} €`, productTitlePrice);
+                var productColor = createElem('p', cartElem.color, productTitle);
+                var productSettings = createElem('div', null, productContent, 'cart__item__content__settings');
+                var productSettingsQuantity = createElem('div', null, productSettings, 'cart__item__content__settings__quantity');
                 productSettingsQuantity.innerHTML += `<p>Qté : </p>
-                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${elem.quantity}">`;
-        
-                var productSettingDelete = document.createElement('div');
-                productSettingDelete.setAttribute('class', 'cart__item__content__settings__delete');
-                var productDelete = document.createElement('p');
-                productDelete.setAttribute('class', 'deleteItem');
-                productDelete.innerText = 'Supprimer';
-
-                productImageDiv.appendChild(productImage);
-
-                productTitle.appendChild(productColor);
-                productTitlePrice.appendChild(productTitle);
-                
-                productTitlePrice.appendChild(productPrice);
-
-                productSettingDelete.appendChild(productDelete);
-                productSettings.appendChild(productSettingsQuantity);
-                productSettings.appendChild(productSettingDelete);
-
-                productContent.appendChild(productTitlePrice);
-                productContent.appendChild(productSettings)
-                productContainer.appendChild(productImageDiv);
-                productContainer.appendChild(productContent);
+                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartElem.quantity}">`;        
+                var productSettingsDelete = createElem('div', null, productSettings, 'cart__item__content__settings__delete');
+                var productDelete = createElem('p', 'Supprimer', productSettingsDelete, 'deleteItem');
             }
         }
     }
