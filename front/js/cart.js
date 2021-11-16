@@ -55,12 +55,10 @@ function displayFinalProducts(array) {
 function getTotalPrice(array) {
     var totalPrice = document.getElementById('totalPrice');
     var totalPriceNumber = 0;
-    for(elem of cart) {
-        var tempProductQuantity = elem.quantity;
-        var tempProductId = elem._id;
+    for(cartElem of cart) {
         for(elem of array) {
-            if(elem._id === tempProductId) {
-                productPrice = tempProductQuantity * elem.price;
+            if(cartElem._id === elem._id) {
+                productPrice = cartElem.quantity * elem.price;
                 totalPriceNumber += productPrice;
             }
         }
