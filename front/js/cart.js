@@ -14,14 +14,21 @@ function displayTotalProductNumbers() {
     totalProductNumbers.textContent = totalQuantity; //changement du texte de '#totalQuantity'
 }
 
-function createElem(type, content, parent, className) { //fonction d'ajout d'élément
-    var elemName = document.createElement(type) //créé la variable
+//fonction d'ajout d'élément
+function createElem(type, parent, className, content) { 
+    var elemName = document.createElement(type); //créé la variable
     if (className) {
         elemName.setAttribute('class', className); //ajoute le classe si il y en a une
     }
-    elemName.innerText = content; //ajoute le texte
+    if (content) {
+        elemName.innerText = content; //ajoute le texte
+    }
+    if(type = 'img'){
+        elemName.src = (elem.imageUrl);
+        elemName.alt = (elem.altTxt);
+    }
     parent.appendChild(elemName); //ajoute l'élément à son parent
-    return elemName
+    return elemName;
 }
 
 //fonction d'affichage des produits du panier
@@ -29,41 +36,40 @@ function displayFinalProducts(array) {
     for(elem of array) {
         for(cartElem of cart) {
             if(cartElem._id === elem._id) { //vérifie si le produit de cart à le même _id que dans products
-                var productContainer = createElem('article', null, productSection, 'cart__item');
+                productContainer = createElem('article', productSection, 'cart__item');
                 productContainer.setAttribute('data-id', cartElem._id);
-                var productImageDiv = createElem('div', null, productContainer, 'cart__item__img');
-                var productImage = createElem('img', null, productImageDiv);
-                productImage.src = (elem.imageUrl);
-                productImage.alt = (elem.altTxt);
-                var productContent = createElem('div', null, productContainer, 'cart_item_content');
-                var productTitlePrice = createElem('div', null, productContent);
-                productTitlePrice.setAttribute('class', 'cart_item_content_titlePrice');
-                var productTitle = createElem('h2', elem.name, productTitlePrice);
-                var productPrice = createElem('p', `${elem.price} €`, productTitlePrice);
-                var productColor = createElem('p', cartElem.color, productTitle);
-                var productSettings = createElem('div', null, productContent, 'cart__item__content__settings');
-                var productSettingsQuantity = createElem('div', null, productSettings, 'cart__item__content__settings__quantity');
+                productImageDiv = createElem('div', productContainer, 'cart__item__img');
+                productImage = createElem('img', productImageDiv);
+                productContent = createElem('div', productContainer, 'cart_item_content');
+                productTitlePrice = createElem('div', productContent, 'cart_item_content_titlePrice');
+                productTitle = createElem('h2', productTitlePrice, null,elem.name,);
+                productPrice = createElem('p', productTitlePrice, null, `${elem.price} €`);
+                productColor = createElem('p', productTitle, null, cartElem.color);
+                productSettings = createElem('div', productContent, 'cart__item__content__settings');
+                productSettingsQuantity = createElem('div', productSettings, 'cart__item__content__settings__quantity');
                 productSettingsQuantity.innerHTML += `<p>Qté : </p>
                     <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartElem.quantity}">`;        
-                var productSettingsDelete = createElem('div', null, productSettings, 'cart__item__content__settings__delete');
-                var productDelete = createElem('p', 'Supprimer', productSettingsDelete, 'deleteItem');
+                productSettingsDelete = createElem('div', productSettings, 'cart__item__content__settings__delete');
+                productDelete = createElem('p', productSettingsDelete, 'deleteItem', 'Supprimer');
             }
         }
     }
 }
 
+//fonction de calcul et d'affichage du prix total
 function getTotalPrice(array) {
     var totalPrice = document.getElementById('totalPrice');
-    var totalPriceNumber = 0;
+    var totalPriceNumber = 0; //créé le prix total
+    //boucle dans cart puis dans product pour chaque élément de cart
     for(cartElem of cart) {
         for(elem of array) {
-            if(cartElem._id === elem._id) {
-                productPrice = cartElem.quantity * elem.price;
-                totalPriceNumber += productPrice;
+            if(cartElem._id === elem._id) { //la fonction ne s'exécute que si l'_id de cart est le même que dans products
+                productPrice = cartElem.quantity * elem.price; // multiplie la quantité dans cart par le prix dans products
+                totalPriceNumber += productPrice; // ajoute le prix multiplié au prix total
             }
         }
     }
-    totalPrice.textContent = totalPriceNumber;
+    totalPrice.textContent = totalPriceNumber; //modifie le texte de #totalPrice par le prix total final
 }
 
 function setArray() {

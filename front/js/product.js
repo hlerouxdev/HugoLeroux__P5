@@ -94,16 +94,11 @@ function addToCart() {
                 var index = cart.findIndex(function(i) { //cherche l'index du produit dans le panier
                     return i.name == productName; 
                 });
-                if(numberSelected === 0) { // Si le champ de quantité a été remis à 0, retire le produit du panier
-                    console.log('la quantité selectionné est 0');
-                    cart.splice(index, 1); //enlève l'index du produit dans panier
+                if(numberSelected != 0) { // Si le champ de quantité a été remis à 0, retire le produit du panier
+                    cart[index].quantity += numberSelected; //ajout la quantité sélctionnée à la quantité du produit
                     localStorage.setItem('cart', JSON.stringify(cart)); //met à jour le panier dans le local storage
-                    console.log('le produit a été retiré');
-                } else{
-                    cart[index].quantity = numberSelected; //modifie la quantité du produit
-                    localStorage.setItem('cart', JSON.stringify(cart)); //met à jour le panier dans le local storage
-                    console.log('la quantité du produit a été mise à jour');
-                }
+                    console.log('La quantité a été ajoutée')
+                } //si la quantité est à, rien ne change
             //le produit n'existe pas dans le panier
             } else{
                 console.log("ce produit n'existe pas dans ce panier");
