@@ -21,9 +21,9 @@ function createElem(type, parent, className, content) {
         elemName.setAttribute('class', className); //ajoute le classe si il y en a une
     }
     if (content) {
-        elemName.innerText = content; //ajoute le texte
+        elemName.innerHTML = content; //ajoute le texte
     }
-    if(type = 'img'){
+    if(type === 'img'){
         elemName.src = (elem.imageUrl);
         elemName.alt = (elem.altTxt);
     }
@@ -46,9 +46,7 @@ function displayFinalProducts(array) {
                 productPrice = createElem('p', productTitlePrice, null, `${elem.price} €`);
                 productColor = createElem('p', productTitle, null, cartElem.color);
                 productSettings = createElem('div', productContent, 'cart__item__content__settings');
-                productSettingsQuantity = createElem('div', productSettings, 'cart__item__content__settings__quantity');
-                productSettingsQuantity.innerHTML += `<p>Qté : </p>
-                    <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartElem.quantity}">`;        
+                productSettingsQuantity = createElem('div', productSettings, 'cart__item__content__settings__quantity', `<p>Qté : </p> <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartElem.quantity}">`);     
                 productSettingsDelete = createElem('div', productSettings, 'cart__item__content__settings__delete');
                 productDelete = createElem('p', productSettingsDelete, 'deleteItem', 'Supprimer');
             }
@@ -87,3 +85,13 @@ async function displayProducts() {
 }
 
 displayProducts();
+
+//--------------------------------------------------FONCTIONS D'AJOUT ET DE SUPPRESSION DES PRODUITS--------------------------------------------------
+
+// function updateQuantity() {
+//     console.log('le produit va être supprimé');
+// }
+
+// var form = document.querySelector('.itemQuantity');
+// var selectElement = form.querySelector('input[name="itemQuantity"]');
+// selectElement.addEventListener('update', updateQuantity());
