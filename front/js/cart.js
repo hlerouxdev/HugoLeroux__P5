@@ -1,6 +1,8 @@
 let cart = JSON.parse(localStorage.getItem('cart'));
 var productSection = document.getElementById('cart__items');
 
+//--------------------------------------------------FONCTIONS D'AFFICHAGE DES PRODUITS--------------------------------------------------
+
 //fonction permettant d'afficher le nombres total de produits
 function displayTotalProductNumbers() { 
     var totalProductNumbers = document.getElementById('totalQuantity'); // sélection de l'element '#totalQuantity'
@@ -42,9 +44,8 @@ function displayFinalProducts(array) {
                 productImage = createElem('img', productImageDiv);
                 productContent = createElem('div', productContainer, 'cart_item_content');
                 productTitlePrice = createElem('div', productContent, 'cart_item_content_titlePrice');
-                productTitle = createElem('h2', productTitlePrice, null,elem.name,);
-                productPrice = createElem('p', productTitlePrice, null, `${elem.price} €`);
-                productColor = createElem('p', productTitle, null, cartElem.color);
+                productTitle = createElem('h2', productTitlePrice, null,`${elem.name} ${cartElem.color}`,);
+                productPrice = createElem('p', productTitlePrice, null, `${elem.price * cartElem.quantity} €`);
                 productSettings = createElem('div', productContent, 'cart__item__content__settings');
                 productSettingsQuantity = createElem('div', productSettings, 'cart__item__content__settings__quantity', `<p>Qté : </p> <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${cartElem.quantity}">`);     
                 productSettingsDelete = createElem('div', productSettings, 'cart__item__content__settings__delete');
@@ -77,21 +78,62 @@ function setArray() {
     .catch((error) => console.error(error));
 }
 
+//--------------------------------------------------FONCTION PRINCIPALE D'APPEL--------------------------------------------------
+
 async function displayProducts() { 
     const products = await setArray(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
     displayFinalProducts(products);
     displayTotalProductNumbers();
     getTotalPrice(products);
+
+    //Bouttons 'Supprimer'
+    let deleteItemButton = document.querySelectorAll('.deleteItem');
+    deleteItemButton.forEach((deleteItem)=>{
+        deleteItem.addEventListener('click', function(event) {
+            var deleteItemClicked = event.target;
+            var itemToDeleteLine = deleteItemClicked.parentElement.parentElement.parentElement.parentElement
+            var itemToDeleteTitle = itemToDeleteLine.querySelector('.cart_item_content_titlePrice h2').textContent;
+            console.log(itemToDeleteLine);
+            for(elem of cart){
+                if(elem._id === itemToDeleteLine.getAttribute('data-id') && getLastWord(itemToDeleteTitle) === elem.color) {
+                    console.log(elem);
+                    // modifyArray(cart.indexOf(elem), cart, 'remove');
+                    console.log('le produit a été retiré du panier');
+                    productSection.remove(itemToDeleteLine);
+                };
+            };
+            getTotalPrice(products);
+        });
+    });
+
+    //Champ de saisie de la quantité
+    let quantityOption = document.querySelectorAll('.itemQuantity');
+    // console.log(quantityOption)
+    quantityOption.forEach((changeQuantity)=>{
+        changeQuantity.addEventListener('udpate', function(event) { 
+            console.log(quantityOption.value)
+        });
+    });
 }
 
 displayProducts();
 
 //--------------------------------------------------FONCTIONS D'AJOUT ET DE SUPPRESSION DES PRODUITS--------------------------------------------------
 
-// function updateQuantity() {
-//     console.log('le produit va être supprimé');
-// }
+function modifyArray(element, array, remove) {
+    if (remove) {
+        array.splice(element, 1); //retrait du produit à cart
+    } else {
+        array.push(element); //ajout du produit à cart
+    }
+    localStorage.setItem('cart', JSON.stringify(array)); //création de cart dans le local storage
+    console.log('la quantité du produit a été mise à jour');
+}
 
-// var form = document.querySelector('.itemQuantity');
-// var selectElement = form.querySelector('input[name="itemQuantity"]');
-// selectElement.addEventListener('update', updateQuantity());
+function getLastWord(string) {
+    var n = string.split(" ");
+    return n[n.length - 1];
+    }
+
+//--------------------------------------------------FONCTIONS D'ENVOIE DU FORMULAIRE--------------------------------------------------
+
