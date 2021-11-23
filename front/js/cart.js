@@ -4,12 +4,12 @@ var productSection = document.getElementById('cart__items');
 //--------------------------------------------------FONCTIONS D'AFFICHAGE DES PRODUITS--------------------------------------------------
 
 //fonction permettant d'afficher le nombres total de produits
-function displayTotalProductNumbers() { 
+function displayTotalProductNumbers() {
     var totalProductNumbers = document.getElementById('totalQuantity'); // sélection de l'element '#totalQuantity'
     var totalQuantity = 0; //création du chiffre qui sera affiché dans '#totalQuantity'
     for(elem of cart) { //boucle dans cart
         if(elem.quantity != 0) { //n'éxecuter que si la quantité du produit n'est pas 0
-            var tempProductQuantity = elem.quantity; //création d'une quantité temporaire pour chaque produit
+            var tempProductQuantity = parseInt(elem.quantity); //création d'une quantité temporaire pour chaque produit
             totalQuantity += tempProductQuantity; //ajout de cette quantité temporaire à la quantité total
         }
     }
@@ -88,6 +88,8 @@ async function displayProducts() {
 
     //Bouttons 'Supprimer'
     let deleteItemButton = document.querySelectorAll('.deleteItem');
+    // let cartItems = document.getElementsByClassName('cart_item');
+    // console.log(cartItems)
     deleteItemButton.forEach((deleteItem)=>{
         deleteItem.addEventListener('click', function(event) {
             var deleteItemClicked = event.target;
@@ -97,12 +99,13 @@ async function displayProducts() {
             for(elem of cart){
                 if(elem._id === itemToDeleteLine.getAttribute('data-id') && getLastWord(itemToDeleteTitle) === elem.color) {
                     console.log(elem);
-                    // modifyArray(cart.indexOf(elem), cart, 'remove');
+                    modifyArray(cart.indexOf(elem), cart, 'remove');
                     console.log('le produit a été retiré du panier');
-                    productSection.remove(itemToDeleteLine);
+                    itemToDeleteLine.remove();
+                    displayTotalProductNumbers();
+                    getTotalPrice(products);
                 };
             };
-            getTotalPrice(products);
         });
     });
 
@@ -110,8 +113,26 @@ async function displayProducts() {
     let quantityOption = document.querySelectorAll('.itemQuantity');
     // console.log(quantityOption)
     quantityOption.forEach((changeQuantity)=>{
-        changeQuantity.addEventListener('udpate', function(event) { 
-            console.log(quantityOption.value)
+        changeQuantity.addEventListener('change', function(e) { 
+            var itemToModifyLine = e.target.parentElement.parentElement.parentElement.parentElement
+            var itemToModifyTitle = itemToModifyLine.querySelector('.cart_item_content_titlePrice h2').textContent;
+            // console.log(e.target.parentElement.parentElement.parentElement.parentElement)
+            // console.log(e.target.value)
+            for(elem of cart){
+                if(elem._id === itemToModifyLine.getAttribute('data-id') && getLastWord(itemToModifyTitle) === elem.color) {
+                    console.log(elem);
+                    modifyArray(elem, cart, e.target.value)
+                    console.log('la quantité du produit a été modifiée');
+                    for(elemProducts of products){
+                        if(elemProducts._id === elem._id){
+                            var productPrice = itemToModifyLine.querySelector('.cart_item_content_titlePrice p')
+                            productPrice.textContent = elem.quantity * elemProducts.price + ' €'
+                        }
+                    }
+                    displayTotalProductNumbers();
+                    getTotalPrice(products);
+                };
+            };
         });
     });
 }
@@ -120,11 +141,11 @@ displayProducts();
 
 //--------------------------------------------------FONCTIONS D'AJOUT ET DE SUPPRESSION DES PRODUITS--------------------------------------------------
 
-function modifyArray(element, array, remove) {
-    if (remove) {
+function modifyArray(element, array, value) {
+    if (value === 'remove') {
         array.splice(element, 1); //retrait du produit à cart
     } else {
-        array.push(element); //ajout du produit à cart
+        element.quantity = value; //modifie la quantité su produit
     }
     localStorage.setItem('cart', JSON.stringify(array)); //création de cart dans le local storage
     console.log('la quantité du produit a été mise à jour');
@@ -137,3 +158,70 @@ function getLastWord(string) {
 
 //--------------------------------------------------FONCTIONS D'ENVOIE DU FORMULAIRE--------------------------------------------------
 
+// let form = document.getElementsByClassName('cart__order__form');
+// let formInputs = form[0].getElementsByTagName('input');
+// let sendButton = document.getElementById('order');
+// console.log(form);
+// console.log(formInputs);
+
+
+// function CheckString(input, type, value){
+//     if(type === 'n') {
+//         let _string = String(input);
+//         for(let i = 0; i < _string.length; i++){
+//             if(!isNaN(_string.charAt(i))){
+//             return true;
+//             }
+//         }
+//         return false;
+//     }
+//     if(type === 'text') {
+//         if(input.includes(value)){
+//             return true;
+//         }
+//         return false;
+//     }
+//   };
+
+// function checkOptions(){
+//     var firstNameError = document.getElementById('firstNameErrorMsg');
+//     var lastNameError = document.getElementById('lastNameErrorMsg')
+//     var emailInput = formInputs[4].value
+//     var emailError = document.getElementById('emailErrorMsg')
+//     if(stringHasNumber(formInputs[0].value)){
+//         firstNameError.textContent = 'ce champ ne doit pas contenir de chiffres';
+//         return false;
+//     } 
+//     else {
+//         if(stringHasNumber(formInputs[1].value)){
+//             lastNameError.textContent = 'ce champ ne doit pas contenir de chiffres';
+//             return false;
+//         }
+//         else {
+//             if(emailInput.prototype.includes('@')){
+//                 return true;
+//             }
+//             else {
+//                 emailError.textContent = 'l\'addresse mail n\'est pas valide'
+//                 return false;
+//             }
+//         }
+//     };
+// };
+
+// sendButton.addEventListener('click', function(){
+//     if (cart === [] || cart === null) {
+//         console.log('le panier est vide')
+//     } else {
+//         checkOptions();
+//         if(checkOptions()){
+//             console.log('le panier peut être envoyé à l\'api')
+//         }
+//     };
+//     // console.log(typeof(formInputs[0].value))
+//     // console.log(formInputs[0].value)
+//     // console.log(typeof(formInputs[1].value))
+//     // console.log(formInputs[1].value)
+//     // console.log(stringHasNumber(formInputs[0].value))
+//     // console.log(stringHasNumber(formInputs[1].value))
+// });
