@@ -103,15 +103,15 @@ function addToCart() {
             } else{
                 console.log("ce produit n'existe pas dans ce panier");
                 addProduct(cart, product, numberSelected);//appel de la fonction d'ajout du produit au panier
-            }
+            };
         //créé le panier avec l'objet selectionné, sa couleur et sa quantité
         } else{ 
             let cart = []; //création du panier
             console.log('le panier a été créé');
             addProduct(cart, product, numberSelected);// appel de la fonction d'ajout du produit au panier
-        }
-    }
-}
+        };
+    };
+};
 
 //ajout de l'appel de la fonction addToCart au clique sur le bouton Ajouter au panier
 addToCartButton.addEventListener("click", addToCart);
