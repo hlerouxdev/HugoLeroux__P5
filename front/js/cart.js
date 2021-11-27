@@ -207,14 +207,17 @@ function createFinalCart() {
     for(cartElem of cart){
         var newElem = {_id: cartElem._id, quantity: cartElem.quantity};
         if(finalCart){
-            for(elem of finalCart){
-                if(elem._id == cartElem._id){
-                    elem.quantity = parseInt(cartElem.quantity) + parseInt(elem.quantity);
-                }
-                else{
-                    finalCart.push(newElem);
+            if(isInCart(finalCart, cartElem._id)){
+                for(elem of finalCart){
+                    if(elem.id == cartElem._id){
+                        var elemQuantity = parseInt(elem.quantity) + parseInt(cartElem.quantity);
+                        elem.quantity = elemQuantity;
+                    };
                 };
-            };
+            }
+            else{
+                finalCart.push(newElem);
+            }
         }
         else{
             var finalCart = [newElem];
@@ -222,3 +225,12 @@ function createFinalCart() {
     };
     console.log(finalCart);
 };
+
+function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l'objet dans un array en regardant son nom
+    for (let elem of array) {
+      if (elem._id === valueToDetect) {
+        return true
+        }
+    }
+    return false
+}
