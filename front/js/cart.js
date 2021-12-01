@@ -78,6 +78,25 @@ function setArray() {
     .catch((error) => console.error(error));
 };
 
+//--------------------------------------------------FONCTIONS D'AJOUT ET DE SUPPRESSION DES PRODUITS--------------------------------------------------
+
+//fonction modifiant le panier dans le local storage
+function modifyArray(element, array, value) {
+    if (value === 'remove') {
+        array.splice(element, 1); //retrait du produit à cart
+    } else {
+        element.quantity = value; //modifie la quantité su produit
+    };
+    localStorage.setItem('cart', JSON.stringify(array)); //création de cart dans le local storage
+    console.log('la quantité du produit a été mise à jour');
+};
+
+//fonction permettant de récupérer le dernier mot utilisée pour connaitre la couleur du produit
+function getLastWord(string) {
+    var n = string.split(" ");
+    return n[n.length - 1];
+};
+
 //--------------------------------------------------FONCTION PRINCIPALE D'APPEL A L'API--------------------------------------------------
 
 async function displayProducts() { //fonction d'appel à l'api
@@ -132,25 +151,6 @@ async function displayProducts() { //fonction d'appel à l'api
 
 displayProducts();
 
-//--------------------------------------------------FONCTIONS D'AJOUT ET DE SUPPRESSION DES PRODUITS--------------------------------------------------
-
-//fonction modifiant le panier dans le local storage
-function modifyArray(element, array, value) {
-    if (value === 'remove') {
-        array.splice(element, 1); //retrait du produit à cart
-    } else {
-        element.quantity = value; //modifie la quantité su produit
-    }
-    localStorage.setItem('cart', JSON.stringify(array)); //création de cart dans le local storage
-    console.log('la quantité du produit a été mise à jour');
-}
-
-//fonction permettant de récupérer le dernier mot utilisée pour connaitre la couleur du produit
-function getLastWord(string) {
-    var n = string.split(" ");
-    return n[n.length - 1];
-    }
-
 //--------------------------------------------------FONCTIONS D'ENVOIE DU FORMULAIRE--------------------------------------------------
 
 let form = document.getElementsByClassName('cart__order__form');
@@ -158,79 +158,97 @@ let formInputs = form[0].getElementsByTagName('input');
 let sendButton = document.getElementById('order');
 
 function checkOptions(){
+    var error = false
     var firstNameError = document.getElementById('firstNameErrorMsg');
     var lastNameError = document.getElementById('lastNameErrorMsg')
     var emailError = document.getElementById('emailErrorMsg')
     if(/\d/.test(formInputs[0].value)){
         firstNameError.textContent = 'ce champ ne doit pas contenir de chiffres';
-    } 
-    else {
-        if(/\d/.test(formInputs[1].value)){
-            lastNameError.textContent = 'ce champ ne doit pas contenir de chiffres';
-        }
-        else {
-            if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(formInputs[4].value)){
-                return true;
-            }
-            else {
-                emailError.textContent = 'l\'addresse mail n\'est pas valide'
-                return false;
-            };
-        };
+        error = true
+    }else{
+        firstNameError.textContent = null;
+    }
+    if(/\d/.test(formInputs[1].value)){
+        lastNameError.textContent = 'ce champ ne doit pas contenir de chiffres';
+        error = true
+    }else{
+        lastNameError.textContent = null;
+    }
+    if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(formInputs[4].value)){
+        emailError.textContent = null;
+    }else{
+        emailError.textContent = 'l\'addresse mail n\'est pas valide';
+        error = true
     };
+    return !error
 };
 
 function checkEmpty(){
-    for(i of formInputs[i]){
-        if(formInputs[i].value != null){
+    for(let elem of formInputs){
+        if(elem.value != null){
             return true
-        };
-        return false
+        }
+        else {
+            return false
+        }
     };
 };
 
-sendButton.addEventListener('click', function(){
-    if (cart === [] || cart === null) {
-        console.log('le panier est vide')
-    } else {
-        if(checkOptions() && checkEmpty()){
-            console.log('le panier peut être envoyé à l\'api')
-        }
-        else{
-            createFinalCart()
-            console.log('le panier ne peut être envoyé')
-        }
-    };
-});
-
 function createFinalCart() {
-    for(cartElem of cart){
-        var newElem = {_id: cartElem._id, quantity: cartElem.quantity};
+    for(let cartElem of cart){
         if(finalCart){
             if(isInCart(finalCart, cartElem._id)){
-                for(elem of finalCart){
-                    if(elem.id == cartElem._id){
-                        var elemQuantity = parseInt(elem.quantity) + parseInt(cartElem.quantity);
-                        elem.quantity = elemQuantity;
-                    };
-                };
             }
             else{
-                finalCart.push(newElem);
-            }
+                finalCart.push(cartElem._id);
+            };
         }
         else{
-            var finalCart = [newElem];
+            var finalCart = [cartElem._id];
         };
     };
-    console.log(finalCart);
+    return finalCart;
 };
 
 function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l'objet dans un array en regardant son nom
     for (let elem of array) {
-      if (elem._id === valueToDetect) {
+      if (elem === valueToDetect) {
         return true
         }
-    }
+    };
     return false
-}
+};
+
+async function send(submitContent) {
+    const response = await fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json', 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(submitContent)
+    })
+    const unTruc = await response.json();
+    return unTruc.orderId;
+};
+  
+
+form[0].addEventListener('submit', async function(e){
+    e.preventDefault()
+    if (cart === [] || cart === null) {
+        console.log('le panier est vide')
+    } else {
+        if(checkOptions() && checkEmpty()){
+            finalCart = createFinalCart();
+            let clientOrder = { //objet devant être onvoyé à l'api
+                'contact': { firstName: formInputs[0].value, lastName: formInputs[1].value, address: formInputs[2].value, city: formInputs[3].value, email: formInputs[4].value}, //contact du client
+                'products': finalCart}; //panier final
+            var orderId = await send(clientOrder);
+            console.log(orderId);
+            console.log('le panier peut être envoyé à l\'api');
+        }
+        else{
+            console.log('le panier ne peut être envoyé');
+        };
+    };
+});
