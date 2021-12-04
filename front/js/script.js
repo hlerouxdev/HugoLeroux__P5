@@ -1,9 +1,10 @@
+//fonction d'appel à l'api
 function setArray() {
-    return fetch("http://localhost:3000/api/products") //appel à l'api
+    return fetch("http://localhost:3000/api/products")
     .then((response) => response.json())
     .then((jsonData) => jsonData) 
     .catch((error) => console.error(error));
-}
+};
 
 // sélection de la class ".item" pour y mettre les élements
 var shopContainer = document.querySelector(".items");
@@ -33,16 +34,14 @@ function createProducts(x) { //fonction de création des liens pour qhaque produ
         productContainer.appendChild(product);
         //ajout du ien dans la classe ".items"
         shopContainer.appendChild(productContainer);
-    }
-}
+    };
+};
 
+//fonction principale
 async function displayProducts() { 
     const products = await setArray(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
     createProducts(products); //appel de la fonction de création des éléments
-    console.log(products)
-}
+};
 
 // appel de la fonction d'affichage
 displayProducts();
-
-

@@ -17,7 +17,7 @@ function findProduct() { //fonction permettant la recherche du produit dans l'ap
     .then((response) => response.json())
     .then((jsonData) => jsonData) 
     .catch((error) => console.error(error));
-}
+};
 
 function createProductContent(x) { //fonction de création/modification des éléments image, title, price et description
     //création de l'image
@@ -31,7 +31,7 @@ function createProductContent(x) { //fonction de création/modification des él�
     singleProductDesc.textContent = (x.description);
     //ajout de l'image dans '.item_img'
     singleProductImage.appendChild(productImage);
-}
+};
 
 function findProductColors(x) { //fonction permettant de récupérer les couleurs du produit
     for( elem of x.colors) { //boucle passant dans chaque key de l'array colors
@@ -39,15 +39,15 @@ function findProductColors(x) { //fonction permettant de récupérer les couleur
         productColor.textContent = (elem); //Ajout du texte dans l'élément option
 
         singleProductColors.appendChild(productColor); //Ajout de l'option dans la div '#colors'
-    }
-}
+    };
+};
 
 async function displaySingleProduct() { //fonction d'affichage de chaque éléments
     const singleProduct = await findProduct(); //récupération des produits via la fontion d'appel pour mettre les données dans un tableau
 
     createProductContent(singleProduct); //appel de la fonction de création des éléments
     findProductColors(singleProduct); //appel de la fonction d'affichage des couleurs
-}
+};
 
 //appel de la fonction d'affichage
 displaySingleProduct();
@@ -58,20 +58,17 @@ function isInCart(array, valueToDetect) { //fonction vérifiant l'existance de l
     for (let elem of array) {
       if (elem.name === valueToDetect) {
         return true
-        }
-    }
+        };
+    };
     return false
-}
+};
 
 function addProduct(array, element, value){ //modifie le panier
-    if(value === 0){
-        console.log('il faut choisir une quantité');
-    } else{
+    if(value != 0){ //si la quantité est "0" ne fait rien
         array.push(element); //ajout du produit à cart
         localStorage.setItem('cart', JSON.stringify(array)); //création de cart dans le local storage
-        console.log('la quantité du produit a été mise à jour');
-    }
-}
+    };
+};
 
 // fonction d'ajout du produit au panier
 function addToCart() {
@@ -82,32 +79,27 @@ function addToCart() {
 
     //vérifie qu'une couleur a été selectionnée
     if(colorSelected === '--SVP, choisissez une couleur --') {//empêche l'ajout du produit si une couleur n'est pas selectionnée
-        console.log('il faut choisir une couleur')
     } else {
         let product = {name: productName, _id: productId, color: colorSelected, quantity: numberSelected}; //création d'un produit avec le nom et la couleur du canapé
         //vérifie l'existence du panier
         if(cart) { 
             cart = JSON.parse(cart);
             //vérifie si le produit est dans le panier
-            if(isInCart(cart, productName)) { 
-                console.log("ce produit existe dans le panier");
+            if(isInCart(cart, productName)) { //le produit est déjà dans le panier
                 var index = cart.findIndex(function(i) { //cherche l'index du produit dans le panier
                     return i.name == productName; 
                 });
                 if(numberSelected != 0) { // Si le champ de quantité a été remis à 0, retire le produit du panier
                     cart[index].quantity += numberSelected; //ajout la quantité sélctionnée à la quantité du produit
                     localStorage.setItem('cart', JSON.stringify(cart)); //met à jour le panier dans le local storage
-                    console.log('La quantité a été ajoutée')
                 } //si la quantité est à, rien ne change
             //le produit n'existe pas dans le panier
-            } else{
-                console.log("ce produit n'existe pas dans ce panier");
+            } else{ //le produit n'existe pas dans le panier
                 addProduct(cart, product, numberSelected);//appel de la fonction d'ajout du produit au panier
             };
         //créé le panier avec l'objet selectionné, sa couleur et sa quantité
-        } else{ 
+        } else{ //le panier n'existe pas
             let cart = []; //création du panier
-            console.log('le panier a été créé');
             addProduct(cart, product, numberSelected);// appel de la fonction d'ajout du produit au panier
         };
     };
