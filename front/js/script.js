@@ -7,24 +7,24 @@ function setArray() {
 };
 
 // sélection de la class ".item" pour y mettre les élements
-var shopContainer = document.querySelector(".items");
+const shopContainer = document.querySelector(".items");
 
 function createProducts(x) { //fonction de création des liens pour qhaque produit
     for (let elem of x) { // boucle dnas l'array
         //Création du lien
-        var productContainer = document.createElement('a');
+        const productContainer = document.createElement('a');
         productContainer.setAttribute('href', `./product.html?id=${elem._id}`);
         //Création de l'article
-        var product = document.createElement('article');
+        const product = document.createElement('article');
         //création de l'image
-        var productImage = document.createElement('img');
+        const productImage = document.createElement('img');
         productImage.src = (elem.imageUrl);
         productImage.alt = (elem.altTxt);
         //création de titre
-        var productTitle = document.createElement('h3');
+        const productTitle = document.createElement('h3');
         productTitle.textContent = (elem.name);
         //création de la description
-        var productDesc = document.createElement('p');
+        const productDesc = document.createElement('p');
         productDesc.textContent =(elem.description);
         //Ajout de chaque élément dans l'article
         product.appendChild(productImage);

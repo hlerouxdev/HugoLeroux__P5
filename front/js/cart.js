@@ -4,15 +4,15 @@ let cart = JSON.parse(localStorage.getItem('cart')); //récupère cart dans le l
 if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
 
 //--------------------------------------------------FONCTIONS D'AFFICHAGE DES PRODUITS--------------------------------------------------
-    var productSection = document.getElementById('cart__items'); //récupère l'id "cart__items"
+    const productSection = document.getElementById('cart__items'); //récupère l'id "cart__items"
 
     //fonction permettant d'afficher le nombres total de produits
     function displayTotalProductNumbers() {
-        var totalProductNumbers = document.getElementById('totalQuantity'); // sélection de l'element '#totalQuantity'
-        var totalQuantity = 0; //création du chiffre qui sera affiché dans '#totalQuantity'
+        const totalProductNumbers = document.getElementById('totalQuantity'); // sélection de l'element '#totalQuantity'
+        let totalQuantity = 0; //création du chiffre qui sera affiché dans '#totalQuantity'
         for(elem of cart) { //boucle dans cart
             if(elem.quantity != 0) { //n'éxecuter que si la quantité du produit n'est pas 0
-                var tempProductQuantity = parseInt(elem.quantity); //création d'une quantité temporaire pour chaque produit
+                let tempProductQuantity = parseInt(elem.quantity); //création d'une quantité temporaire pour chaque produit
                 totalQuantity += tempProductQuantity; //ajout de cette quantité temporaire à la quantité total
             };
         };
@@ -21,7 +21,7 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
 
     //fonction d'ajout d'élément
     function createElem(type, parent, className, content) { 
-        var elemName = document.createElement(type); //créé la variable
+        let elemName = document.createElement(type); //créé la variable
         if (className) {
             elemName.setAttribute('class', className); //ajoute le classe si il y en a une
         };
@@ -60,8 +60,8 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
 
     //fonction de calcul et d'affichage du prix total
     function getTotalPrice(array) {
-        var totalPrice = document.getElementById('totalPrice');
-        var totalPriceNumber = 0; //créé le prix total
+        const totalPrice = document.getElementById('totalPrice');
+        let totalPriceNumber = 0; //créé le prix total
         //boucle dans cart puis dans product pour chaque élément de cart
         for(cartElem of cart) {
             for(elem of array) {
@@ -95,7 +95,7 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
 
     //fonction permettant de récupérer le dernier mot utilisée pour connaitre la couleur du produit
     function getLastWord(string) {
-        var n = string.split(' ');
+        let n = string.split(' ');
         return n[n.length - 1]; //regarde le dernier mot de la string
     };
 
@@ -111,9 +111,9 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
         let deleteItemButton = document.querySelectorAll('.deleteItem');
         deleteItemButton.forEach((deleteItem)=>{
             deleteItem.addEventListener('click', function(e) { //action au click sur la class '.deleteItem'
-                var deleteItemClicked = e.target; //récupère l'élément cliqué
-                var itemToDeleteLine = deleteItemClicked.parentElement.parentElement.parentElement.parentElement //récupère la ligne à supprimer
-                var itemToDeleteTitle = itemToDeleteLine.querySelector('.cart__item__content__titlePrice h2').textContent; //récupère le nom de l'élément
+                const deleteItemClicked = e.target; //récupère l'élément cliqué
+                const itemToDeleteLine = deleteItemClicked.parentElement.parentElement.parentElement.parentElement //récupère la ligne à supprimer
+                const itemToDeleteTitle = itemToDeleteLine.querySelector('.cart__item__content__titlePrice h2').textContent; //récupère le nom de l'élément
                 for(elem of cart){
                     if(elem._id === itemToDeleteLine.getAttribute('data-id') && getLastWord(itemToDeleteTitle) === elem.color) { //retire l'élément du panier si son id et sa couleur correspondent à l'élément cliqué
                         modifyArray(cart.indexOf(elem), cart, 'remove'); //retire l'élément de cart
@@ -129,20 +129,22 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
         let quantityOption = document.querySelectorAll('.itemQuantity');
         quantityOption.forEach((changeQuantity)=>{
             changeQuantity.addEventListener('change', function(e) { 
-                var itemToModifyLine = e.target.parentElement.parentElement.parentElement.parentElement
-                var itemToModifyTitle = itemToModifyLine.querySelector('.cart__item__content__titlePrice h2').textContent;
+                const itemToModifyLine = e.target.parentElement.parentElement.parentElement.parentElement
+                const itemToModifyTitle = itemToModifyLine.querySelector('.cart__item__content__titlePrice h2').textContent;
                 for(elem of cart){
-                    if(elem._id === itemToModifyLine.getAttribute('data-id') && getLastWord(itemToModifyTitle) === elem.color) {
-                        modifyArray(elem, cart, e.target.value) //change la quantité de l'élément dans cart
-                        for(elemProducts of products){
-                            if(elemProducts._id === elem._id){
-                                var productPrice = itemToModifyLine.querySelector('.cart__item__content__titlePrice p')
-                                productPrice.textContent = elem.quantity * elemProducts.price + ' €' //change le prix du produit
+                    if(e.target.value > 0){
+                        if(elem._id === itemToModifyLine.getAttribute('data-id') && getLastWord(itemToModifyTitle) === elem.color) {
+                            modifyArray(elem, cart, e.target.value) //change la quantité de l'élément dans cart
+                            for(elemProducts of products){
+                                if(elemProducts._id === elem._id){
+                                    const productPrice = itemToModifyLine.querySelector('.cart__item__content__titlePrice p')
+                                    productPrice.textContent = elem.quantity * elemProducts.price + ' €' //change le prix du produit
+                                }
                             }
-                        }
-                        displayTotalProductNumbers(); //appel de la fonction d'affichage du nombre de produits
-                        getTotalPrice(products); //appel de la fonction de calcul et d'affichage du prix total
-                    };
+                            displayTotalProductNumbers(); //appel de la fonction d'affichage du nombre de produits
+                            getTotalPrice(products); //appel de la fonction de calcul et d'affichage du prix total
+                        };
+                    }
                 };
             });
         });
@@ -152,15 +154,17 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
 
     //--------------------------------------------------FONCTIONS D'ENVOIE DU FORMULAIRE--------------------------------------------------
 
-    let form = document.getElementsByClassName('cart__order__form');
-    let formInputs = form[0].getElementsByTagName('input'); //ici formInputs est une liste déléments du DOM. Chaque élément est un champ du formulaire
+    const form = document.getElementsByClassName('cart__order__form');
+    const formInputs = form[0].getElementsByTagName('input'); //ici formInputs est une liste déléments du DOM. Chaque élément est un champ du formulaire
+    //regex trouvée sur http://emailregex.com/
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
     //fonction de vérification de validité des champs du formulaire
     function checkOptions(){
-        var error = false
-        var firstNameError = document.getElementById('firstNameErrorMsg');
-        var lastNameError = document.getElementById('lastNameErrorMsg')
-        var emailError = document.getElementById('emailErrorMsg')
+        let error = false
+        const firstNameError = document.getElementById('firstNameErrorMsg');
+        const lastNameError = document.getElementById('lastNameErrorMsg')
+        const emailError = document.getElementById('emailErrorMsg')
         if(/\d/.test(formInputs[0].value)){ //vérifie si le champ "firstName"
             firstNameError.textContent = 'ce champ ne doit pas contenir de chiffres';
             error = true
@@ -173,7 +177,7 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
         }else{
             lastNameError.textContent = null;
         }
-        if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(formInputs[4].value)){ //vérifie si le champ "email"
+        if(emailRegex.test(formInputs[4].value)){ //vérifie si le champ "email"
             emailError.textContent = null;
         }else{
             emailError.textContent = 'l\'addresse mail n\'est pas valide';
@@ -196,8 +200,9 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
 
     //fonction de création du panier final et d'ajout d'élément à ce dernier
     function createFinalCart() {
+        let finalCart = null;
         for(let cartElem of cart){
-            if(finalCart){
+            if(finalCart !=null){
                 if(isInCart(finalCart, cartElem._id)){
                 }
                 else{
@@ -205,7 +210,7 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
                 };
             }
             else{
-                var finalCart = [cartElem._id];
+                finalCart = [cartElem._id];
             };
         };
         return finalCart;
@@ -221,17 +226,23 @@ if(pageUrl.includes('cart.html')){ //lance le code sur la page cart.html
         return false
     };
 
+    const emptyCartMessage = document.createElement('h2');
+    emptyCartMessage.style = ('width: 100%;display: flex;justify-content: center; opacity:')
+    form[0].appendChild(emptyCartMessage);
+
     //fonction d'envoie du formulaire
     form[0].addEventListener('submit', async function(e){
         e.preventDefault()
-        if (cart === [] || cart === null) { //si le panier est vide ou si il n'existe pas ne fait rien
-        } else {
-            if(checkOptions() && checkEmpty()){
-                finalCart = createFinalCart();
+        emptyCartMessage.innerHTML = ('')
+        if(checkOptions() && checkEmpty()){
+            finalCart = createFinalCart();
+            if(finalCart === null) {
+                emptyCartMessage.innerHTML = ('Le panier est vide')
+            } else {
                 let clientOrder = { //objet devant être onvoyé à l'api
                     'contact': { firstName: formInputs[0].value, lastName: formInputs[1].value, address: formInputs[2].value, city: formInputs[3].value, email: formInputs[4].value}, //contact du client
                     'products': finalCart}; //panier final
-                var orderId = await send(clientOrder); //envoie de clientOrder à l'api avec l'orderId en réponse
+                const orderId = await send(clientOrder); //envoie de clientOrder à l'api avec l'orderId en réponse
                 window.location.href = `confirmation.html?orderId=${orderId}`; //redirige vers la page confirmation
             };
         };
@@ -255,7 +266,7 @@ async function send(submitContent) {
 //--------------------------------------------------FONCTIONS D'AFFICHAGE DE L'ORDERID--------------------------------------------------
 
 if(pageUrl.includes('confirmation.html')){ //lance le code sur la page confirmation.html
-    var orderIdField = document.getElementById('orderId');
+    const orderIdField = document.getElementById('orderId');
     const queryString = window.location.search; //creation d'une constante avec l'url
     const urlParams = new URLSearchParams(queryString); //crétion de la recherche de paramètres de l'url
     const ordertId = urlParams.get('orderId'); //récupération de l'orderId dans l'url
